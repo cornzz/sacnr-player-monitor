@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
         JFXPanel fxPanel = new JFXPanel();
+        print("Starting player monitor.");
         CheckerTask checkerTask = new CheckerTask();
         boolean ready = false;
         while (!ready) {
