@@ -33,6 +33,7 @@ public class CheckerTask extends TimerTask {
         if (dialog(showConfirmDialog(null, "Monitor different server?", appTitleSetup, YES_NO_OPTION)) == 1) {
             if (dialog(showConfirmDialog(null, "Check for SACNR admins?", appTitleSetup, YES_NO_OPTION)) == 0) {
                 try {
+                    print("Fetcching admin list, please wait...");
                     Document document = Jsoup.connect("https://sacnr.com/staff").followRedirects(false).timeout(30000).get();
                     targets = document.body().select(".gendata>tbody>tr>td>p>span>a").eachText();
                 } catch (IOException e) {
