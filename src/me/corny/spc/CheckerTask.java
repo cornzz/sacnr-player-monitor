@@ -29,6 +29,7 @@ public class CheckerTask extends TimerTask {
         if (!yesNoDialog("Monitor different server?")) {
             if (yesNoDialog("Check for admins?")) {
                 try {
+                    print("Fetcching admin list, please wait...");
                     Document document = Jsoup.connect("https://sacnr.com/staff").followRedirects(false).timeout(30000).get();
                     targets = document.body().select(".gendata>tbody>tr>td>p>span>a").eachText();
                 } catch (IOException e) {
