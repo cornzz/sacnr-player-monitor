@@ -6,12 +6,17 @@ import javafx.util.Duration;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 
+import static javax.swing.JOptionPane.*;
+
 public class CheckerTask extends TimerTask {
 
+    private static final String appTitle = "SACNR player monitor";
+    private static final String appTitleSetup = "SACNR player monitor setup";
     // Sound from http://freesound.org, Name: buttonchime02up.wav, Author: JustinBW
     private MediaPlayer alert = new MediaPlayer(new Media(getClass().getClassLoader().getResource("alert.mp3").toExternalForm()));
     private static String baseIp = "server.sacnr.com";
@@ -21,46 +26,61 @@ public class CheckerTask extends TimerTask {
     private static Scanner scanner = new Scanner(System.in);
 
     public CheckerTask() {
-        print("Press Ctrl+C at any time to exit the app.");
         print("Setting up SACNR player checker...");
     }
 
     boolean setup() {
-        if (!yesNoDialog("Monitor different server?")) {
-            if (yesNoDialog("Check for admins?")) {
+        if (dialog(showConfirmDialog(null, "Monitor different server?", appTitleSetup, YES_NO_OPTION)) == 1) {
+            if (dialog(showConfirmDialog(null, "Check for SACNR admins?", appTitleSetup, YES_NO_OPTION)) == 0) {
                 try {
                     Document document = Jsoup.connect("https://sacnr.com/staff").followRedirects(false).timeout(30000).get();
                     targets = document.body().select(".gendata>tbody>tr>td>p>span>a").eachText();
                 } catch (IOException e) {
-                    print("Couldn't retrieve admin list: " + e);
+                    showMessageDialog(null, "Couldn't retrieve admin list: " + e, appTitleSetup, INFORMATION_MESSAGE);
                 }
             }
         } else {
-            print("Enter server address:");
-            String[] nextLine = scanner.nextLine().split(":");
-            baseIp = nextLine[0];
-            try {
-                if (nextLine.length > 1) {
-                    basePort = Integer.valueOf(nextLine[1]);
-                }
-            } catch (NumberFormatException ignored) {}
+            Optional.ofNullable(showInputDialog(null, "Enter server address:", appTitleSetup, INFORMATION_MESSAGE)).
+                    ifPresent(input -> {
+                        String[] address = input.split(":");
+                        baseIp = address[0];
+                        try {
+                            if (address.length > 1) {
+                                basePort = Integer.valueOf(address[1]);
+                            }
+                        } catch (NumberFormatException ignored) {}
+                    });
         }
+
         try {
             sampQuery = new SampQuery(baseIp, basePort);
         } catch (Exception e) {
-            print("Invalid server address!");
+            showMessageDialog(null, "Invalid server address!", appTitleSetup, ERROR_MESSAGE);
+            baseIp = "server.sacnr.com";
+            basePort = 7777;
             return false;
         }
-        print("Add targets (separated by comma), or press enter");
-        List<String> t = new ArrayList<>(Arrays.asList(scanner.nextLine().split("\\s*,\\s*")));
-        t.removeAll(Arrays.asList("", " "));
-        targets.addAll(t);
+
+        Optional.ofNullable(showInputDialog(null, "Add targets (separated by comma)", appTitleSetup, INFORMATION_MESSAGE)).
+                ifPresent(input -> {
+                    List<String> t = new ArrayList<>(Arrays.asList(input.split("\\s*,\\s*")));
+                    t.removeAll(Arrays.asList("", " "));
+                    targets.addAll(t);
+                });
+
         if (targets.isEmpty()) {
-            print("No targets, exiting...");
+            showMessageDialog(null, "No targets, exiting...", appTitle, 0);
             System.exit(0);
         }
-        print("Targets: " + targets);
-        return true;
+
+        return showConfirmDialog(null, "Targets: " + targets, appTitleSetup, OK_CANCEL_OPTION) == 0;
+    }
+
+    private int dialog(int value) {
+        if (value == -1) {
+            System.exit(0);
+        }
+        return value;
     }
 
     public void run() {
@@ -85,18 +105,7 @@ public class CheckerTask extends TimerTask {
         }
     }
 
-    private static boolean yesNoDialog(String q) {
-        while (true) {
-            print(q + " [y/n]");
-            String yn = scanner.nextLine();
-            switch (yn) {
-                case "y":
-                    return true;
-                case "n":
-                    return false;
-            }
-        }
-    }
+
 
     private static void print(Object o) {
         String ts = String.format("[%s] ", new Timestamp(new Date().getTime()));
