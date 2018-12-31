@@ -96,15 +96,11 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
 *.tar.gz
 *.rar
-
- # META-INF
- */META-INF/*
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -135,3 +131,11 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/java,windows,intellij
+
+### Custom stuff ###
+
+# META-INF
+*/META-INF/*
+
+# Libs
+jsoup-1.11.3.jar

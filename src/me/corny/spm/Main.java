@@ -1,4 +1,4 @@
-package me.corny.spc;
+package me.corny.spm;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -14,7 +14,7 @@ public class Main {
             ready = checkerTask.setup();
         }
         Timer timer = new Timer();
-        timer.schedule(checkerTask, 0, 10000);
+        timer.schedule(checkerTask, 0, 60000);
     }
 
 }

@@ -1,4 +1,4 @@
-package me.corny.spc;
+package me.corny.spm;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 
 import static javax.swing.JOptionPane.*;
@@ -29,6 +30,7 @@ public class CheckerTask extends TimerTask {
     private static int serverPort = 7777;
     private static SampQuery sampQuery;
     private static List<String> targets = new ArrayList<>();
+    private static List<String> onlineTargets = new ArrayList<>();
 
     boolean setup() {
         if (dialog(showConfirmDialog(null, "Monitor different server?", appTitleSetup, YES_NO_OPTION)) == 1) {
@@ -89,18 +91,23 @@ public class CheckerTask extends TimerTask {
                 onlinePlayers.add(player[0]);
             }
             Collections.sort(onlinePlayers);
-            ArrayList<String> onlineTargets = new ArrayList<>(onlinePlayers);
-            onlineTargets.retainAll(targets);
-            if (!onlineTargets.isEmpty()) {
+            onlineTargets.retainAll(onlinePlayers);
+            ArrayList<String> newOnlineTargets = new ArrayList<>(onlinePlayers);
+            newOnlineTargets.retainAll(targets);
+            newOnlineTargets.removeAll(onlineTargets);
+            if (!newOnlineTargets.isEmpty()) {
+                onlineTargets.addAll(newOnlineTargets);
+                statusPane.setText("New online targets: " + newOnlineTargets + " Online since: " + getTimestamp());
                 alert.seek(Duration.seconds(0));
                 alert.play();
+            } else {
+                statusPane.setText("No new online targets. Last check: " + getTimestamp());
             }
             onlineTargetsPane.setText(onlineTargets.toString());
             onlinePlayersPane.setText(onlinePlayers.toString());
-            statusPane.setText("Idle...");
         } else {
             showMessageDialog(frame, "Server did not respond.", appTitle, INFORMATION_MESSAGE);
-            statusPane.setText("Last check failed...");
+            statusPane.setText("Last check at " + getTimestamp() + " failed");
         }
     }
 
@@ -127,6 +134,10 @@ public class CheckerTask extends TimerTask {
             showMessageDialog(null, "Couldn't retrieve admin list: " + e, appTitleSetup, INFORMATION_MESSAGE);
         }
         dialog.dispose();
+    }
+
+    private String getTimestamp() {
+        return String.format("[%s]", new Timestamp(new Date().getTime()));
     }
 
 }

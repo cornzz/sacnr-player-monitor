@@ -10,7 +10,7 @@
 // Creative Commons Attribution-NoDerivs 3.0 Unported License
 * *****************************************************************/
 
-package me.corny.spc;
+package me.corny.spm;
 
 import java.io.BufferedReader;
 import java.io.IOException;
