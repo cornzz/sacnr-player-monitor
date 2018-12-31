@@ -14,7 +14,7 @@ public class Main {
             ready = checkerTask.setup();
         }
         Timer timer = new Timer();
-        timer.schedule(checkerTask, 0, 30000);
+        timer.schedule(checkerTask, 0, 10000);
     }
 
 }
