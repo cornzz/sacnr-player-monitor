@@ -6,7 +6,7 @@ With default settings the app monitors [San Andreas Cops And Robbers](https://sa
 
 ## Usage
 
-Run the .jar application and follow the prompts:
+[Download](https://github.com/cornzz/sacnr-player-monitor/releases/latest) and run the .jar application and follow the prompts:
 
 ```
 Monitor different server? [y/n]
