@@ -7,17 +7,20 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.List;
 
 import static javax.swing.JOptionPane.*;
 
 public class CheckerTask extends TimerTask {
 
-    private static final String appTitle = "SACNR player monitor";
+    private static final String appTitle = "SACNR player monitor - made by corny";
     private static final String appTitleSetup = "SACNR player monitor setup";
-    private JFrame frame = new JFrame("SACNR player monitor");
+    private Image appIcon = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("sacnr.jpg"));
+    private JFrame frame = new JFrame(appTitle);
     private JPanel panel;
     private JTextPane statusPane;
     private JTextPane targetsPane;
@@ -25,7 +28,7 @@ public class CheckerTask extends TimerTask {
     private JTextPane onlinePlayersPane;
 
     // Sound from http://freesound.org, Name: buttonchime02up.wav, Author: JustinBW
-    private MediaPlayer alert = new MediaPlayer(new Media(getClass().getClassLoader().getResource("alert.mp3").toExternalForm()));
+    private MediaPlayer alert = new MediaPlayer(new Media(this.getClass().getClassLoader().getResource("alert.mp3").toExternalForm()));
     private static String serverIp = "server.sacnr.com";
     private static int serverPort = 7777;
     private static SampQuery sampQuery;
@@ -76,6 +79,7 @@ public class CheckerTask extends TimerTask {
         frame.setContentPane(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
+        frame.setIconImage(appIcon);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
@@ -120,6 +124,7 @@ public class CheckerTask extends TimerTask {
 
     private JDialog customDialog(String message) {
         JDialog dialog = new JOptionPane(message, INFORMATION_MESSAGE).createDialog(appTitleSetup);
+        dialog.setIconImage(appIcon);
         dialog.setModal(false);
         dialog.setVisible(true);
         return dialog;
