@@ -66,7 +66,7 @@ public class CheckerTask extends TimerTask {
         }
         dialog.dispose();
         Optional.ofNullable(showInputDialog(null, "Add targets (separated by comma)", appTitleSetup, INFORMATION_MESSAGE)).
-                ifPresent(input -> targets.addAll(Arrays.asList(input.split("\\s*,\\s*"))));
+                ifPresent(input -> targets.addAll(Arrays.asList(input.toLowerCase().split("\\s*,\\s*"))));
         targets.removeAll(Arrays.asList("", " "));
         if (targets.isEmpty()) {
             showMessageDialog(null, "No targets, exiting...", appTitleSetup, INFORMATION_MESSAGE);
@@ -92,11 +92,11 @@ public class CheckerTask extends TimerTask {
         if (sampQuery.connect()) {
             String[][] result = sampQuery.getBasicPlayers();
             for (String[] player : result) {
-                onlinePlayers.add(player[0]);
+                onlinePlayers.add(player[0].toLowerCase());
             }
             Collections.sort(onlinePlayers);
-            onlineTargets.retainAll(onlinePlayers);
             ArrayList<String> newOnlineTargets = new ArrayList<>(onlinePlayers);
+            onlineTargets.retainAll(onlinePlayers);
             newOnlineTargets.retainAll(targets);
             newOnlineTargets.removeAll(onlineTargets);
             if (!newOnlineTargets.isEmpty()) {
@@ -135,6 +135,7 @@ public class CheckerTask extends TimerTask {
         try {
             Document document = Jsoup.connect("https://sacnr.com/staff").followRedirects(false).timeout(30000).get();
             targets = document.body().select(".gendata>tbody>tr>td>p>span>a").eachText();
+            targets.replaceAll(String::toLowerCase);
         } catch (IOException e) {
             showMessageDialog(null, "Couldn't retrieve admin list: " + e, appTitleSetup, INFORMATION_MESSAGE);
         }
